@@ -5,7 +5,17 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function AuthPage() {
   const [user] = useAuthState(auth);
-  const googleSignIn = async () => await signInWithPopup(auth, new GoogleAuthProvider());
+  const googleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (error) {
+      if (error.code === "auth/popup-closed-by-user") {
+        console.log("User closed the sign-in popup. No action needed.");
+      } else {
+        console.error("Authentication error:", error.message);
+      }
+    }
+  };
   const logOut = async () => await signOut(auth);
 
   return (
